@@ -1,0 +1,555 @@
+<html>
+<head>
+    <title>
+        Philip Janßen - Portfolio
+    </title>
+    <link rel="stylesheet" type="text/css" href="portfolio.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+</head>
+<body>
+    <header>
+        <div id="profile-container" style="position: relative; display: inline-block;">
+            <!-- Profilbild -->
+            <img src="witzigerHund.jpg" id="profile-image" alt="Profilbild" style="width: 150px; height: 150px; border-radius: 50%;">   
+            
+        </div>
+        <h1>Philip Janßen</h1>
+        <p>Auszubildender Fachinformatiker Systemintegration</p>
+
+        <div id="like-system">
+            <button id="like-button">
+                <i id="like-icon" class="fa fa-heart"></i>
+                <span id="like-count">0</span>
+            </button>
+        </div>
+          
+        
+        <div class="header-icons">
+            <a href="#" id="close-icon" class="header-icon">
+                <i class="fa-solid fa-xmark"></i>
+            </a>            
+            <a href="#" id="play-icon" class="header-icon" title="Rato Milton">
+                <i class="fa-solid fa-play"></i>
+            </a>           
+            <a href="#" id="darkmode-toggle" class="header-icon" title="Dark Mode on/off">
+                <i class="fa-solid fa-moon"></i>
+            </a>
+            <a href="#" id="elevator-icon" class="header-icon" title="Elevator">
+                <i class="fa-solid fa-elevator"></i>
+            </a>
+            <a href="#" id="calendar-icon" class="header-icon" title="Calendar">
+                <i class="fa-solid fa-calendar-days"></i>
+            </a>
+            <a href="#" id="link-icon" class="header-icon" title="Copy link">
+                <i class="fa-solid fa-link"></i>
+            </a>
+            <a href="#" id="film-icon" class="header-icon">
+                <i class="fa-solid fa-film"></i>
+            </a>
+            <a href="#" id="lightning-icon" class="header-icon" title="?">
+                <i class="fa-solid fa-bolt"></i>
+            </a>
+            <div id="lightning-popup" class="popup" style="display: none;">
+                <p>Ein leeres Feld... wow!</p>
+                <i class="fa-solid fa-spinner fa-spin-pulse"></i>
+            </div>
+            
+        </div>
+
+        <div id="elevator-box" style="display: none;">
+            🚪
+        </div>
+
+        <div id="calendar-popup" style="display: none;">
+            <input type="text" id="flatpickr-calendar" placeholder="Wähle ein Datum">
+        </div>
+
+        <input type="text" id="calendar-input" style="display: none;">
+
+        <div id="copy-message" style="display: none; position: absolute; background-color: #333; color: #fff; padding: 5px; border-radius: 5px; font-size: 12px; z-index: 10;">Link kopiert!</div>
+
+    </header>
+
+
+
+
+    <script>
+        // Flatpickr Initialisierung
+        const calendarPopup = document.getElementById('calendar-popup');
+        const calendarInput = document.getElementById('flatpickr-calendar');
+        const calendarIcon = document.getElementById('calendar-icon');
+        
+        // Initialisiere Flatpickr
+        const flatpickrInstance = flatpickr(calendarInput, {
+            onChange: function(selectedDates, dateStr, instance) {
+                console.log("Datum ausgewählt:", dateStr); // Optional: Hier kannst du das ausgewählte Datum verarbeiten
+            },
+            dateFormat: "Y-m-d", // Beispiel: Jahres-Monat-Tag Format
+        });
+        
+        // Zeige den Kalender an, wenn auf das Icon geklickt wird
+        calendarIcon.addEventListener('click', function(event) {
+            event.preventDefault(); // Verhindert das Standardverhalten des Links
+            
+            // Zeigt das Kalender-Eingabefeld an, falls es versteckt ist
+            if (calendarPopup.style.display === "none") {
+                calendarPopup.style.display = "block";
+                flatpickrInstance.open(); // Öffnet den Kalender sofort
+            } else {
+                calendarPopup.style.display = "none"; // Kalender verstecken, wenn er bereits angezeigt wird
+            }
+        });
+    </script>
+
+
+
+
+    <script>
+        const linkIcon = document.getElementById('link-icon');
+        const copyMessage = document.getElementById('copy-message');
+
+        linkIcon.addEventListener('click', function(event) {
+            event.preventDefault(); // Verhindert das Standardverhalten des Links
+
+            // Hole den aktuellen Website-Link (URL)
+            const currentUrl = window.location.href;
+
+            // Kopiere die URL in die Zwischenablage
+            navigator.clipboard.writeText(currentUrl)
+                .then(() => {
+                    console.log('Link wurde in die Zwischenablage kopiert: ' + currentUrl);
+
+                    // Zeige die Nachricht an
+                    copyMessage.style.display = 'block';
+                    copyMessage.style.opacity = '1';
+
+                    // Positioniere die Nachricht unter dem Icon (optional anpassen)
+                    const iconRect = linkIcon.getBoundingClientRect();
+                    copyMessage.style.top = iconRect.bottom + 'px';
+                    copyMessage.style.left = iconRect.left + 'px';
+
+                    // Nachricht nach 2 Sekunden ausblenden
+                    setTimeout(() => {
+                        copyMessage.style.opacity = '0'; // Blende es aus
+                        setTimeout(() => {
+                            copyMessage.style.display = 'none'; // Verstecke es nach der Animation
+                        }, 300); // Zeit für die Fade-out-Transition
+                    }, 2000); // Zeit, die die Nachricht angezeigt wird
+                })
+                .catch(err => {
+                    console.error('Fehler beim Kopieren des Links: ', err);
+                });
+        });
+    </script>
+
+
+    
+
+    <script>
+        const lightningIcon = document.getElementById('lightning-icon');
+        const lightningPopup = document.getElementById('lightning-popup');
+
+        // Klick-Event, um das Popup anzuzeigen
+        lightningIcon.addEventListener('click', function(event) {
+            event.preventDefault(); // Verhindert das Standardverhalten des Links
+
+            // Zeigt oder versteckt das Popup-Fenster
+            if (lightningPopup.style.display === 'none') {
+                lightningPopup.style.display = 'block';
+            } else {
+                lightningPopup.style.display = 'none';
+            }
+        });
+
+        // Schließt das Popup, wenn außerhalb geklickt wird
+        window.addEventListener('click', function(event) {
+            if (!lightningPopup.contains(event.target) && !lightningIcon.contains(event.target)) {
+                lightningPopup.style.display = 'none';
+            }
+        });
+    </script>
+
+
+
+
+    <script>
+        const likeButton = document.getElementById('like-button');
+        const likeCount = document.getElementById('like-count');
+
+        let count = 0;
+        let isClicked = false;
+
+        // Klick-Event, um die Anzahl zu erhöhen, Konfetti anzuzeigen und die Farbe zu ändern
+        likeButton.addEventListener('click', () => {
+            count++;
+            likeCount.textContent = count;
+
+            // Setze den Klick-Status auf "aktiv"
+            isClicked = true;
+            likeButton.style.backgroundColor = '#ff6666';  // Farbe nach dem Klick
+
+            // Konfetti auslösen
+            confetti({
+                particleCount: 100,   // Anzahl der Partikel
+                angle: 60,            // Abwurfwinkel
+                spread: 55,           // Ausbreitung des Konfettis
+                origin: { x: 0.5, y: 0.5 },  // Ursprung (Mitte des Fensters)
+                colors: ['#ff0', '#ff0000', '#ff6666', '#ff1a1a'],  // Konfetti-Farben
+            });
+        });
+
+        // Hover-Event für die Farbe
+        likeButton.addEventListener('mouseover', () => {
+            if (isClicked) {
+                likeButton.style.backgroundColor = '#ff6666';  // Behalte die Klick-Farbe
+            } else {
+                likeButton.style.backgroundColor = '#ff1a1a';  // Hover-Effekt
+            }
+        });
+
+        // Event wenn der Mauszeiger den Button verlässt
+        likeButton.addEventListener('mouseout', () => {
+            if (!isClicked) {
+                likeButton.style.backgroundColor = '#ff4d4d';  // Ursprüngliche Farbe zurücksetzen
+            }
+        });
+    </script>
+    
+    
+    
+
+    <section id="bio">
+        <h2>Über mich</h2>
+        <p>[Meine Biographie]</p>
+    </section>
+    <section id="work">
+        <h2>Meine Arbeit</h2>
+        <div class="projects">
+            <a href="portfolio_fachinformatiker.html" class="project" id="project1">
+                Fachinformatiker für Systemintegration
+            </a>
+            <a href="https://www.oowv.de/" class="project" id="project2">
+                Der OOWV
+            </a>
+            <a href="https://karriere.oowv.de/" class="project" id="project3">
+                Karriere
+            </a>
+        </div>
+    </section>
+    
+    <section id="socialmedia">
+        <h2>Social Media</h2>
+        <div class="social-icons">
+            <a href="https://www.tiktok.com/@philipryze" class="social-icon">
+                <i class="fa-brands fa-tiktok"></i>
+            </a>
+            <a href="https://www.x.com/philipryze/" class="social-icon">
+                <i class="fa-brands fa-x-twitter"></i>
+            </a>
+            <a href="https://www.youtube.com/@philipsedits1188" class="social-icon">
+                <i class="fa-brands fa-youtube"></i>
+            </a>
+            <a href="https://www.instagram.com/philip_janssen/" class="social-icon">
+                <i class="fa-brands fa-instagram"></i>
+            </a>
+            <a href="https://www.reddit.com/user/PhilipRyZe/" class="social-icon">
+                <i class="fa-brands fa-reddit"></i>
+            </a>
+            <a href="https://discord.com/channels/603276427198201886/801009513037430784" class="social-icon">
+                <i class="fa-brands fa-discord"></i>
+            </a>
+            <a href="https://github.com/PhilipRyZe" class="social-icon">
+                <i class="fa-brands fa-github"></i>
+            </a>
+            <a href="snapcode.svg" class="social-icon">
+                <i class="fa-brands fa-snapchat"></i>
+            </a>
+        </div>
+    </section>
+
+    <section id="comments-section">
+        <h2>Kommentare</h2>
+
+        <!-- Eingabefeld für Kommentare -->
+        <textarea id="comment-input" placeholder="Schreib deinen Kommentar..."></textarea>
+        <button id="submit-comment">Kommentar abschicken</button>
+
+        <!-- Knopf zum Löschen der Kommentare -->
+        <button id="clear-comments">Alle Kommentare löschen</button>
+
+        <div id="comment-list">
+            <!-- Kommentare werden hier angezeigt -->
+        </div>
+    </section>
+
+
+
+
+    <script>
+        const commentInput = document.getElementById('comment-input');
+        const submitCommentButton = document.getElementById('submit-comment');
+        const clearCommentsButton = document.getElementById('clear-comments');
+        const commentList = document.getElementById('comment-list');
+
+        // Lade bestehende Kommentare (falls vorhanden)
+        window.onload = function() {
+            const savedComments = JSON.parse(localStorage.getItem('comments')) || [];
+            savedComments.forEach(comment => {
+                displayComment(comment);
+            });
+        };
+
+        // Kommentar hinzufügen und im LocalStorage speichern
+        submitCommentButton.addEventListener('click', function() {
+            const newComment = commentInput.value.trim();
+
+            if (newComment) {
+                // Kommentar anzeigen
+                displayComment(newComment);
+
+                // Kommentar in LocalStorage speichern
+                const savedComments = JSON.parse(localStorage.getItem('comments')) || [];
+                savedComments.push(newComment);
+                localStorage.setItem('comments', JSON.stringify(savedComments));
+
+                // Eingabefeld leeren
+                commentInput.value = '';
+            }
+        });
+
+        // Kommentar in den Kommentarbereich einfügen
+        function displayComment(comment) {
+            const commentDiv = document.createElement('div');
+            commentDiv.className = 'comment';
+            commentDiv.textContent = comment;
+            commentList.appendChild(commentDiv);
+        }
+
+        // Alle Kommentare löschen
+        clearCommentsButton.addEventListener('click', function() {
+            localStorage.removeItem('comments');  // Löscht alle Kommentare im LocalStorage
+            commentList.innerHTML = '';  // Löscht alle Kommentare auf der Seite
+        });
+    </script>
+
+    <script>
+        const toggleButton = document.getElementById('darkmode-toggle');
+        const icon = toggleButton.querySelector('i');
+
+        // Funktion zum Aktualisieren des Icons
+        function updateIcon() {
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        }
+
+        // Dark Mode nur aktivieren, wenn explizit gespeichert ist
+        const savedMode = localStorage.getItem('darkmode');
+        if (savedMode === 'true') {
+            document.body.classList.add('dark-mode');
+        }
+
+        updateIcon();
+
+        toggleButton.addEventListener('click', function (event) {
+            event.preventDefault();
+            document.body.classList.toggle('dark-mode');
+
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkmode', isDark);
+            updateIcon();
+        });
+    </script>
+
+
+    
+    <footer>
+        <p>Erreiche mich unter [E-Mail]</p>
+
+    </footer>
+
+    <div id="secret-message" style="display: none;">
+        💥 Du hast das geheime Easter Egg gefunden!
+    </div>
+    <audio id="easter-egg-sound" src="among-us-role-reveal-sound.mp3"></audio>
+
+    <script>
+        const konamiCode = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+        let input = [];
+    
+        const message = document.getElementById('secret-message');
+        const sound = document.getElementById('easter-egg-sound');
+    
+        window.addEventListener('keydown', (e) => {
+            input.push(e.key);
+            input.splice(-konamiCode.length - 1, input.length - konamiCode.length);
+    
+            if (input.join('') === konamiCode.join('')) {
+                // Sound abspielen
+                sound.play();
+    
+                // Nachricht anzeigen
+                message.style.display = 'block';
+                setTimeout(() => {
+                    message.style.opacity = '1';
+                }, 10);
+    
+                // Nachricht nach 5 Sekunden wieder ausblenden
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    setTimeout(() => {
+                        message.style.display = 'none';
+                    }, 1500); // Zeit für die Ausblendung
+                }, 5000);
+            }
+        });
+    </script>
+
+    <script>
+    document.getElementById('close-icon').addEventListener('click', function(event) {
+        event.preventDefault(); // Verhindert das Standardverhalten des Links
+
+        // Zeige eine kurze Verzögerung, bevor die Seite geschlossen wird
+        setTimeout(function() {
+            window.close(); // Schließt das aktuelle Fenster
+        }, 15500); // 3 Sekunden Verzögerung
+    });
+    </script>
+
+    <audio id="close-sound" src="outro-song_oqu8zAg.mp3" preload="auto"></audio>
+    <script>
+    document.getElementById('close-icon').addEventListener('click', function(event) {
+        event.preventDefault(); // Verhindert das Standardverhalten des Links
+    
+        // Abspielen des Schließtons
+        const sound = document.getElementById('close-sound');
+        sound.play();
+    
+        // Zeige eine kurze Verzögerung, bevor die Seite geschlossen wird
+        setTimeout(function() {
+            window.close(); // Schließt das aktuelle Fenster
+        }, 15500); // 3 Sekunden Verzögerung
+    });
+    </script>
+
+    <script>
+    const profileImage = document.getElementById('profile-image');
+    const tiktokVideo = document.getElementById('tiktok-video');
+
+    // Wenn der Benutzer mit der Maus über das Bild fährt
+    profileImage.addEventListener('mouseover', function() {
+        tiktokVideo.style.display = 'block';  // Video anzeigen
+        tiktokVideo.play();  // Video abspielen
+    });
+
+    // Wenn der Benutzer die Maus vom Bild entfernt
+    profileImage.addEventListener('mouseout', function() {
+        tiktokVideo.style.display = 'none';  // Video ausblenden
+        tiktokVideo.pause();  // Video anhalten
+        tiktokVideo.currentTime = 0;  // Video zurücksetzen
+    });
+    </script>
+
+    <audio id="my-audio" src="rat-dance-music.mp3" preload="auto"></audio> <!-- Ersetze "path_to_your_song.mp3" mit dem tatsächlichen Pfad zur Audiodatei -->
+
+    <script>
+    document.getElementById("play-icon").addEventListener("click", function(event) {
+    event.preventDefault(); // Verhindert das Standardverhalten des Links
+
+    const audio = document.getElementById("my-audio");
+    const playIcon = this.querySelector('i'); // Referenz auf das Icon
+
+    // Wenn das Audio pausiert ist, wird es abgespielt
+    if (audio.paused) {
+        audio.play();
+        playIcon.classList.remove("fa-play"); // Entfernt das Play-Icon
+        playIcon.classList.add("fa-pause");  // Fügt das Pause-Icon hinzu
+    } else {
+        audio.pause();
+        playIcon.classList.remove("fa-pause"); // Entfernt das Pause-Icon
+        playIcon.classList.add("fa-play");  // Fügt das Play-Icon hinzu
+    }
+
+    // Setze das Icon zurück, wenn der Song zu Ende ist
+    audio.onended = function() {
+        playIcon.classList.remove("fa-pause"); // Entfernt das Pause-Icon
+        playIcon.classList.add("fa-play");  // Fügt das Play-Icon wieder hinzu
+    };
+    });
+    </script>
+
+    <audio id="elevator-audio" src="musica-elevador-short.mp3" preload="auto"></audio>
+
+    <script>
+    const elevatorIcon = document.getElementById("elevator-icon");
+    const elevatorAudio = document.getElementById("elevator-audio");
+
+    let isElevatorBusy = false; // 🔒 Status-Flag
+
+    elevatorIcon.addEventListener("click", function (event) {
+        event.preventDefault();
+
+        if (isElevatorBusy) return; // 🚫 Kein Doppelklick erlaubt während der Fahrt
+
+        isElevatorBusy = true; // 🔒 Fahrstuhl fährt
+
+        const rect = elevatorIcon.getBoundingClientRect();
+        const startLeft = rect.left + window.scrollX;
+        const startTop = rect.top + window.scrollY;
+
+        // Platzhalter
+        const placeholder = document.createElement("div");
+        placeholder.style.width = rect.width + "px";
+        placeholder.style.height = rect.height + "px";
+        elevatorIcon.parentNode.insertBefore(placeholder, elevatorIcon);
+
+        // Position fixieren
+        elevatorIcon.style.position = "fixed";
+        elevatorIcon.style.left = `${startLeft}px`;
+        elevatorIcon.style.top = `${startTop}px`;
+        elevatorIcon.style.width = `${rect.width}px`;
+        elevatorIcon.style.height = `${rect.height}px`;
+        elevatorIcon.style.zIndex = "9999";
+        elevatorIcon.style.transition = `top ${elevatorAudio.duration || 3}s linear`;
+
+        elevatorAudio.currentTime = 0;
+        elevatorAudio.play();
+
+        // Fahrt starten
+        setTimeout(() => {
+            elevatorIcon.style.top = "90vh";
+        }, 50);
+
+        // Nach Musik Rückfahrt und Rückbau
+        elevatorAudio.onended = () => {
+            elevatorIcon.style.transition = "top 1s ease";
+            elevatorIcon.style.top = `${startTop}px`;
+
+            setTimeout(() => {
+                // Ursprüngliches Styling wiederherstellen
+                elevatorIcon.style.position = "";
+                elevatorIcon.style.left = "";
+                elevatorIcon.style.top = "";
+                elevatorIcon.style.width = "";
+                elevatorIcon.style.height = "";
+                elevatorIcon.style.zIndex = "";
+                elevatorIcon.style.transition = "";
+
+                placeholder.replaceWith(elevatorIcon);
+                isElevatorBusy = false; // 🔓 Fahrstuhl wieder frei
+            }, 1000);
+        };
+    });
+    </script>
+
+
+    
+</body>
+</html>
