@@ -40,6 +40,9 @@
             <a href="#" id="elevator-icon" class="header-icon" title="Elevator">
                 <i class="fa-solid fa-elevator"></i>
             </a>
+            <a href="#" id="snake-icon" class="header-icon" title="Snake spielen">
+                <i class="fa-solid fa-dragon"></i>
+            </a>            
             <a href="#" id="calendar-icon" class="header-icon" title="Calendar">
                 <i class="fa-solid fa-calendar-days"></i>
             </a>
@@ -56,8 +59,29 @@
                 <p>Ein leeres Feld... wow!</p>
                 <i class="fa-solid fa-spinner fa-spin-pulse"></i>
             </div>
+            <a href="#" id="lightbulb-icon" class="header-icon" title="Klicke für mehr Infos">
+                <i class="fa-solid fa-lightbulb"></i>
+            </a>
+            <div id="lightbulb-popup" class="popup" style="display: none;">
+                <textarea readonly>Probiere mal die folgenden Tastenkombinationen:</textarea>
+                <textarea readonly>↑ ↑ ↓ ↓ ← → ← → b a</textarea>
+                <textarea readonly>matrix</textarea>
+                <textarea readonly>konfetti</textarea>
+            </div>
             
         </div>
+
+        <div id="meme-video-popup" style="display: none;">
+            <div class="meme-video-inner">
+              <button id="close-meme-video">✖</button>
+              <video id="meme-video" controls>
+                <source src="I love aquaman.mp4" type="video/mp4">
+                Dein Browser unterstützt dieses Videoformat nicht.
+              </video>
+            </div>
+          </div>
+          
+          
 
         <div id="elevator-box" style="display: none;">
             🚪
@@ -549,6 +573,252 @@
     });
     </script>
 
+    <canvas id="matrix-canvas" style="display: none;"></canvas>
+
+    <script>
+        const matrixCode = ['m','a','t','r','i','x'];
+        let matrixInput = [];
+        
+        window.addEventListener('keydown', (e) => {
+            matrixInput.push(e.key.toLowerCase());
+            matrixInput.splice(-matrixCode.length - 1, matrixInput.length - matrixCode.length);
+        
+            if (matrixInput.join('') === matrixCode.join('')) {
+                activateMatrix();
+            }
+        });
+        
+        function activateMatrix() {
+            const canvas = document.getElementById('matrix-canvas');
+            const ctx = canvas.getContext('2d');
+        
+            canvas.style.display = 'block';
+            canvas.style.opacity = '1';
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        
+            const letters = "アァイィウエェオカサタナハマヤャラワンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            const fontSize = 16;
+            const columns = canvas.width / fontSize;
+            const drops = Array(Math.floor(columns)).fill(1);
+        
+            function draw() {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+                ctx.fillStyle = "#0F0";
+                ctx.font = fontSize + "px monospace";
+        
+                for (let i = 0; i < drops.length; i++) {
+                    const text = letters.charAt(Math.floor(Math.random() * letters.length));
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+        
+                    drops[i]++;
+                }
+            }
+        
+            const interval = setInterval(draw, 50);
+        
+            // Nach 6 Sekunden: Ausblenden
+            setTimeout(() => {
+                canvas.style.opacity = '0';
+            }, 10000);
+        
+            // Nach 7 Sekunden: Stop & Hide
+            setTimeout(() => {
+                clearInterval(interval);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                canvas.style.display = 'none';
+            }, 11000);
+        }
+        </script>
+
+    <div id="snake-container" style="display: none;">
+        <canvas id="snake-canvas" width="400" height="400"></canvas>
+    </div>
+
+    <script>
+document.getElementById("snake-icon").addEventListener("click", function(event) {
+    event.preventDefault();
+    startSnakeGame();
+});
+
+function startSnakeGame() {
+    const container = document.getElementById('snake-container');
+    const canvas = document.getElementById('snake-canvas');
+    const ctx = canvas.getContext('2d');
+    container.style.display = 'block';
+
+    const gridSize = 20;
+    const tileCount = canvas.width / gridSize;
+
+    let snake = [{ x: 10, y: 10 }];
+    let direction = { x: 1, y: 0 };
+    let food = { x: 15, y: 15 };
+    let gameLoop;
+
+    // Event Listener für Pfeiltasten deaktivieren
+    window.removeEventListener('keydown', handleKey); // Deaktiviert das Scrollen der Seite
+    document.addEventListener('keydown', handleKey);
+
+    // Steuerung
+    function handleKey(e) {
+        switch (e.key) {
+            case 'ArrowUp': if (direction.y === 0) direction = { x: 0, y: -1 }; break;
+            case 'ArrowDown': if (direction.y === 0) direction = { x: 0, y: 1 }; break;
+            case 'ArrowLeft': if (direction.x === 0) direction = { x: -1, y: 0 }; break;
+            case 'ArrowRight': if (direction.x === 0) direction = { x: 1, y: 0 }; break;
+            case 'Escape': endSnakeGame(); break;
+        }
+    }
+
+    function game() {
+        const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+
+        // Game Over Check
+        if (
+            head.x < 0 || head.x >= tileCount ||
+            head.y < 0 || head.y >= tileCount ||
+            snake.some(segment => segment.x === head.x && segment.y === head.y)
+        ) {
+            endSnakeGame();
+            return;
+        }
+
+        snake.unshift(head);
+
+        // Futter gefressen?
+        if (head.x === food.x && head.y === food.y) {
+            food = {
+                x: Math.floor(Math.random() * tileCount),
+                y: Math.floor(Math.random() * tileCount)
+            };
+        } else {
+            snake.pop();
+        }
+
+        draw();
+    }
+
+    function draw() {
+        ctx.fillStyle = 'black';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Snake zeichnen
+        ctx.fillStyle = 'lime';
+        snake.forEach(s => {
+            ctx.fillRect(s.x * gridSize, s.y * gridSize, gridSize - 2, gridSize - 2);
+        });
+
+        // Futter zeichnen
+        ctx.fillStyle = 'red';
+        ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, gridSize - 2);
+    }
+
+    function endSnakeGame() {
+        clearInterval(gameLoop);
+        container.style.display = 'none';
+        // Reaktiviert das Scrollen der Seite
+        window.addEventListener('keydown', handleKey);
+    }
+
+    gameLoop = setInterval(game, 150);
+}
+</script>
+
+        
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+              const sequence = 'konfetti';
+              let buffer = '';
+              const emojis  = ['💥','🎉','🦄','🚀','🍕'];
+            
+              window.addEventListener('keydown', e => {
+                buffer += e.key.toLowerCase();
+                if (buffer.length > sequence.length) {
+                  buffer = buffer.slice(-sequence.length);
+                }
+                if (buffer === sequence) {
+                  // Emoji‑Explosion: 30 Emojis in 0.1 s‑Abständen
+                  for (let i = 0; i < 30; i++) {
+                    setTimeout(() => {
+                      const el = document.createElement('div');
+                      el.className = 'emoji';
+                      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                      el.style.left = (Math.random() * 100) + 'vw';
+                      document.body.appendChild(el);
+                      el.addEventListener('animationend', () => el.remove());
+                    }, i * 100);
+                  }
+                  buffer = ''; // verhindert erneutes Feuern
+                }
+              });
+            });
+            </script>
+            
+            <script>
+                const lightbulbIcon = document.getElementById('lightbulb-icon');
+                const lightbulbPopup = document.getElementById('lightbulb-popup');
+            
+                // Klick-Event für das Lichtbirnen-Icon
+                lightbulbIcon.addEventListener('click', function(event) {
+                    event.preventDefault();  // Verhindert das Standardverhalten des Links
+                    
+                    // Zeige oder verstecke das Popup-Fenster
+                    if (lightbulbPopup.style.display === 'none') {
+                        lightbulbPopup.style.display = 'block';
+                    } else {
+                        lightbulbPopup.style.display = 'none';
+                    }
+                });
+            
+                // Schließt das Popup, wenn außerhalb geklickt wird
+                window.addEventListener('click', function(event) {
+                    if (!lightbulbPopup.contains(event.target) && !lightbulbIcon.contains(event.target)) {
+                        lightbulbPopup.style.display = 'none';
+                    }
+                });
+            </script>
+            
+            <script>
+                const textareas = document.querySelectorAll('#lightbulb-popup textarea');
+              
+                const texts = [
+                  'Probiere mal die folgenden Tastenkombinationen:',
+                  '↑ ↑ ↓ ↓ ← → ← → b a',
+                  'matrix',
+                  'konfetti'
+                ];
+              
+                textareas.forEach((ta, i) => {
+                  ta.value = texts[i];
+                });
+              </script>
+              
+              <script>
+                const videoIcon = document.getElementById('film-icon');
+                const popup = document.getElementById('meme-video-popup');
+                const closeBtn = document.getElementById('close-meme-video');
+                const video = document.getElementById('meme-video');
+              
+                videoIcon.addEventListener('click', (e) => {
+                  e.preventDefault();
+                  popup.style.display = 'flex';
+                });
+              
+                closeBtn.addEventListener('click', () => {
+                  popup.style.display = 'none';
+                  video.pause();
+                  video.currentTime = 0;
+                });
+              </script>
+              
+              
 
     
 </body>
