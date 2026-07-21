@@ -41,6 +41,9 @@
                 <i class="fa-solid fa-elevator"></i>
             </a>
             <a href="#" id="snake-icon" class="header-icon" title="Snake spielen">
+                <i class="fa-solid fa-gamepad"></i>
+            </a>
+            <a href="#" id="dragon-icon" class="header-icon" title="Scotland Forever">
                 <i class="fa-solid fa-dragon"></i>
             </a>            
             <a href="#" id="calendar-icon" class="header-icon" title="Calendar">
@@ -572,6 +575,21 @@
         };
     });
     </script>
+
+    <script>    
+    const dragonIcon = document.getElementById("dragon-icon");
+    const scotlandAudio = document.getElementById("scotland-audio");
+
+    dragonIcon.addEventListener("click", function(e) {
+        e.preventDefault();
+
+        scotlandAudio.pause();
+        scotlandAudio.currentTime = 0;
+        scotlandAudio.play();
+    });
+    </script>
+
+    <audio id="scotland-audio" src="scotlandforever.mp3" preload="auto"></audio>
 
     <canvas id="matrix-canvas" style="display: none;"></canvas>
 
