@@ -10,6 +10,46 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 <body>
+    <div id="name-gate">
+        <div class="name-gate-box">
+            <p>Wie heißt du?</p>
+            <input type="text" id="visitor-name-input" placeholder="Dein Name" maxlength="30" autofocus>
+            <button id="visitor-name-submit">Weiter</button>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const gate = document.getElementById('name-gate');
+            const input = document.getElementById('visitor-name-input');
+            const submitBtn = document.getElementById('visitor-name-submit');
+
+            const savedName = localStorage.getItem('visitorName');
+
+            if (savedName) {
+                gate.style.display = 'none';
+            } else {
+                document.body.classList.add('gated');
+            }
+
+            function submitName() {
+                const name = input.value.trim();
+                if (!name) {
+                    input.focus();
+                    return;
+                }
+                localStorage.setItem('visitorName', name);
+                gate.style.display = 'none';
+                document.body.classList.remove('gated');
+            }
+
+            submitBtn.addEventListener('click', submitName);
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') submitName();
+            });
+        })();
+    </script>
+
     <header>
         <div id="profile-container" style="position: relative; display: inline-block;">
             <!-- Profilbild -->
@@ -203,37 +243,57 @@
     <script>
         const likeButton = document.getElementById('like-button');
         const likeCount = document.getElementById('like-count');
+        const LIKES_API = "https://url.pjanssen.cc/api/likes";
 
-        let count = 0;
         let isClicked = false;
+
+        function setLikedUI() {
+            isClicked = true;
+            likeButton.classList.add('liked');
+            likeButton.style.backgroundColor = '#ff6666';
+            likeButton.disabled = true;
+        }
+
+        // Aktuellen Stand + eigenen Like-Status vom Server laden
+        fetch(LIKES_API)
+            .then(res => res.json())
+            .then(data => {
+                likeCount.textContent = data.count;
+                if (data.hasLiked) {
+                    setLikedUI();
+                }
+            })
+            .catch(err => console.error('Konnte Like-Anzahl nicht laden:', err));
 
         // Klick-Event, um die Anzahl zu erhöhen, Konfetti anzuzeigen und die Farbe zu ändern
         likeButton.addEventListener('click', () => {
-            count++;
+            if (isClicked) return; // Schon geliked, kein erneuter Request
 
-            // Sound bei jedem Klick neu starten
-            const sound = new Audio("ahh.mp3");
-            sound.play();
+            fetch(LIKES_API, { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    likeCount.textContent = data.count;
 
-            likeCount.textContent = count;
+                    // Sound abspielen
+                    const sound = new Audio("ahh.mp3");
+                    sound.play();
 
-            isClicked = true;
-            likeButton.style.backgroundColor = '#ff6666';
+                    confetti({
+                        particleCount: 100,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0.5, y: 0.5 },
+                        colors: ['#ff0', '#ff0000', '#ff6666', '#ff1a1a'],
+                    });
 
-            confetti({
-                particleCount: 100,
-                angle: 60,
-                spread: 55,
-                origin: { x: 0.5, y: 0.5 },
-                colors: ['#ff0', '#ff0000', '#ff6666', '#ff1a1a'],
-            });
+                    setLikedUI();
+                })
+                .catch(err => console.error('Like fehlgeschlagen:', err));
         });
 
         // Hover-Event für die Farbe
         likeButton.addEventListener('mouseover', () => {
-            if (isClicked) {
-                likeButton.style.backgroundColor = '#ff6666';  // Behalte die Klick-Farbe
-            } else {
+            if (!isClicked) {
                 likeButton.style.backgroundColor = '#ff1a1a';  // Hover-Effekt
             }
         });
@@ -251,19 +311,24 @@
 
     <section id="bio">
         <h2>Über mich</h2>
-        <p>[Meine Biographie]</p>
+        <p>
+            Ich bin Philip, Auszubildender zum Fachinformatiker für Systemintegration beim OOWV.
+            Dort arbeite ich unter anderem an einem größeren Infrastruktur-Projekt: dem Austausch unserer
+            Thin Clients und der Migration auf eine IGEL Universal Management Suite (UMS)-Umgebung.
+        </p>
+        <p>
+            Neben der Arbeit bastel ich gerne an eigenen kleinen Projekten – wie diesem Portfolio oder
+            meinem eigenen URL-Shortener – und leite außerdem eine Gaming-Community auf Discord.
+        </p>
     </section>
     <section id="work">
         <h2>Meine Arbeit</h2>
         <div class="projects">
-            <a href="portfolio_fachinformatiker.html" class="project" id="project1">
-                Fachinformatiker für Systemintegration
-            </a>
             <a href="https://www.oowv.de/" class="project" id="project2">
                 Der OOWV
             </a>
-            <a href="https://karriere.oowv.de/" class="project" id="project3">
-                Karriere
+            <a href="https://url-shortener.pjanssen.cc/" class="project" id="project-shortener">
+                URL Shortener
             </a>
         </div>
     </section>
@@ -398,11 +463,6 @@
 
 
     
-    <footer>
-        <p>Erreiche mich unter [E-Mail]</p>
-
-    </footer>
-
     <div id="secret-message" style="display: none;">
         💥 Du hast das geheime Easter Egg gefunden!
     </div>
