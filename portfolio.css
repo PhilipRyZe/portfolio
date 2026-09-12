@@ -488,13 +488,9 @@ body.dark-mode .comment-time {
     color: #e74c3c; /* Rote Farbe beim Hover */
 }
 
-#elevator-icon {
-
-    right: 20px;
-    top: 10px;
-    z-index: 999;
-    transition: top linear;
-}
+/* #elevator-icon hat keine eigene Positionierung mehr nötig – die Fahrt
+   selbst wird komplett per JS (inline styles) gesteuert, und in Ruheposition
+   soll er sich wie jedes andere Icon in der Leiste verhalten. */
 
 #matrix-canvas {
     position: fixed;

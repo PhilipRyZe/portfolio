@@ -673,18 +673,25 @@
         elevatorIcon.style.width = `${rect.width}px`;
         elevatorIcon.style.height = `${rect.height}px`;
         elevatorIcon.style.zIndex = "9999";
-        elevatorIcon.style.transition = `top ${elevatorAudio.duration || 3}s linear`;
+        // Feste Fahrtdauer statt von der Musikdatei abhängig zu sein.
+        // Vorher hing die Rückfahrt komplett an audio.onended – lud/spielte
+        // die Datei mal nicht sauber (Autoplay-Sperre, kurzer Ladefehler),
+        // kam der Fahrstuhl nie zurück und blockierte alle weiteren Klicks.
+        const rideDuration = 3; // Sekunden
+        elevatorIcon.style.transition = `top ${rideDuration}s linear`;
 
         elevatorAudio.currentTime = 0;
-        elevatorAudio.play();
+        elevatorAudio.play().catch(() => {
+            // Autoplay verhindert o.ä. – Fahrt trotzdem stattfinden lassen
+        });
 
         // Fahrt starten
         setTimeout(() => {
             elevatorIcon.style.top = "90vh";
         }, 50);
 
-        // Nach Musik Rückfahrt und Rückbau
-        elevatorAudio.onended = () => {
+        // Rückfahrt und Rückbau – per festem Timer statt audio.onended
+        const resetElevator = () => {
             elevatorIcon.style.transition = "top 1s ease";
             elevatorIcon.style.top = `${startTop}px`;
 
@@ -702,6 +709,8 @@
                 isElevatorBusy = false; // 🔓 Fahrstuhl wieder frei
             }, 1000);
         };
+
+        setTimeout(resetElevator, rideDuration * 1000);
     });
     </script>
 
