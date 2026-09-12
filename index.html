@@ -66,38 +66,35 @@
           
         
         <div class="header-icons">
-            <a href="#" id="close-icon" class="header-icon">
+            <a href="#" id="close-icon" class="header-icon" data-tip="Schließen" aria-label="Schließen">
                 <i class="fa-solid fa-xmark"></i>
             </a>            
-            <a href="#" id="play-icon" class="header-icon" title="Rato Milton">
+            <a href="#" id="play-icon" class="header-icon" data-tip="Musik" aria-label="Musik">
                 <i class="fa-solid fa-play"></i>
             </a>           
-            <a href="#" id="darkmode-toggle" class="header-icon" title="Dark Mode on/off">
-                <i class="fa-solid fa-moon"></i>
-            </a>
-            <a href="#" id="elevator-icon" class="header-icon" title="Elevator">
+            <a href="#" id="elevator-icon" class="header-icon" data-tip="Elevator" aria-label="Elevator">
                 <i class="fa-solid fa-elevator"></i>
             </a>
-            <a href="#" id="snake-icon" class="header-icon" title="Snake spielen">
+            <a href="#" id="snake-icon" class="header-icon" data-tip="Snake spielen" aria-label="Snake spielen">
                 <i class="fa-solid fa-gamepad"></i>
             </a>
-            <a href="#" id="calendar-icon" class="header-icon" title="Heutiges Datum">
+            <a href="#" id="calendar-icon" class="header-icon" data-tip="Heutiges Datum" aria-label="Heutiges Datum">
                 <i class="fa-solid fa-calendar-days"></i>
             </a>
-            <a href="#" id="link-icon" class="header-icon" title="Copy link">
+            <a href="#" id="link-icon" class="header-icon" data-tip="Link kopieren" aria-label="Link kopieren">
                 <i class="fa-solid fa-link"></i>
             </a>
-            <a href="#" id="film-icon" class="header-icon">
+            <a href="#" id="film-icon" class="header-icon" data-tip="Video" aria-label="Video">
                 <i class="fa-solid fa-film"></i>
             </a>
-            <a href="#" id="lightning-icon" class="header-icon" title="?">
+            <a href="#" id="lightning-icon" class="header-icon" data-tip="?" aria-label="?">
                 <i class="fa-solid fa-bolt"></i>
             </a>
             <div id="lightning-popup" class="popup" style="display: none;">
                 <p>Ein leeres Feld... wow!</p>
                 <i class="fa-solid fa-spinner fa-spin-pulse"></i>
             </div>
-            <a href="#" id="lightbulb-icon" class="header-icon" title="Klicke für mehr Infos">
+            <a href="#" id="lightbulb-icon" class="header-icon" data-tip="Infos" aria-label="Klicke für mehr Infos">
                 <i class="fa-solid fa-lightbulb"></i>
             </a>
             <div id="lightbulb-popup" class="popup" style="display: none;">
@@ -108,6 +105,10 @@
             </div>
             
         </div>
+
+        <button id="darkmode-toggle" class="darkmode-float" title="Dark Mode on/off">
+            <i class="fa-solid fa-moon"></i> <span id="darkmode-label">Dark Mode</span>
+        </button>
 
         <div id="meme-video-popup" style="display: none;">
             <div class="meme-video-inner">
@@ -488,15 +489,18 @@
     <script>
         const toggleButton = document.getElementById('darkmode-toggle');
         const icon = toggleButton.querySelector('i');
+        const label = document.getElementById('darkmode-label');
 
-        // Funktion zum Aktualisieren des Icons
+        // Funktion zum Aktualisieren von Icon und Label
         function updateIcon() {
             if (document.body.classList.contains('dark-mode')) {
                 icon.classList.remove('fa-moon');
                 icon.classList.add('fa-sun');
+                if (label) label.textContent = 'Light Mode';
             } else {
                 icon.classList.remove('fa-sun');
                 icon.classList.add('fa-moon');
+                if (label) label.textContent = 'Dark Mode';
             }
         }
 
