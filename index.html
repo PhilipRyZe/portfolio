@@ -1348,16 +1348,29 @@
                 const popup = document.getElementById('meme-video-popup');
                 const closeBtn = document.getElementById('close-meme-video');
                 const video = document.getElementById('meme-video');
-              
-                videoIcon.addEventListener('click', (e) => {
+
+                function openMemeVideo(e) {
                   e.preventDefault();
                   popup.style.display = 'flex';
-                });
-              
-                closeBtn.addEventListener('click', () => {
-                  popup.style.display = 'none';
+                  requestAnimationFrame(() => popup.classList.add('visible'));
+                }
+
+                function closeMemeVideo() {
+                  popup.classList.remove('visible');
                   video.pause();
                   video.currentTime = 0;
+                  setTimeout(() => { popup.style.display = 'none'; }, 200);
+                }
+
+                videoIcon.addEventListener('click', openMemeVideo);
+                closeBtn.addEventListener('click', closeMemeVideo);
+
+                popup.addEventListener('click', (e) => {
+                  if (e.target === popup) closeMemeVideo();
+                });
+
+                document.addEventListener('keydown', (e) => {
+                  if (e.key === 'Escape' && popup.style.display === 'flex') closeMemeVideo();
                 });
               </script>
               
