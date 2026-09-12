@@ -451,6 +451,16 @@ body.dark-mode button:hover {
     background-color: #666;
 }
 
+/* Einzelne Kommentar-Boxen (waren vorher fest hellgrau, egal im Dark Mode) */
+body.dark-mode .comment {
+    background-color: #3a3a3a;
+    border: 1px solid #555;
+}
+
+body.dark-mode .comment-time {
+    color: #b3b3b3;
+}
+
 #secret-message {
     position: fixed;
     top: 50%;

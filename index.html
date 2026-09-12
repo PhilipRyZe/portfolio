@@ -659,6 +659,13 @@
         placeholder.style.height = rect.height + "px";
         elevatorIcon.parentNode.insertBefore(placeholder, elevatorIcon);
 
+        // Aus der Icon-Pille lösen: die Pille hat backdrop-filter/blur,
+        // das erzeugt einen eigenen Bezugsrahmen für position:fixed-Kinder.
+        // Dadurch würde der Fahrstuhl relativ zur kleinen Pille statt zum
+        // Bildschirm positioniert werden. Also während der Fahrt an den
+        // body hängen, danach per placeholder.replaceWith() wieder zurück.
+        document.body.appendChild(elevatorIcon);
+
         // Position fixieren
         elevatorIcon.style.position = "fixed";
         elevatorIcon.style.left = `${startLeft}px`;
