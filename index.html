@@ -837,14 +837,20 @@
       .snake-modal{
         position:relative;
         width:min(92vw, 440px);
-        background:linear-gradient(160deg,#15181d,#0c0e12);
-        border:1px solid rgba(255,255,255,.08);
+        background:linear-gradient(160deg,#ffffff,#f3f4f6);
+        border:1px solid rgba(0,0,0,.08);
         border-radius:20px;
         padding:20px 20px 24px;
-        box-shadow:0 20px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.03) inset;
+        box-shadow:0 20px 60px rgba(0,0,0,.18), 0 0 0 1px rgba(0,0,0,.02) inset;
         transform:scale(.94);
-        transition:transform .2s ease;
+        transition:transform .2s ease, background .2s ease, border-color .2s ease;
         font-family:'Segoe UI', system-ui, sans-serif;
+        color:#1f2937;
+      }
+      body.dark-mode .snake-modal{
+        background:linear-gradient(160deg,#15181d,#0c0e12);
+        border-color:rgba(255,255,255,.08);
+        box-shadow:0 20px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.03) inset;
         color:#e5e7eb;
       }
       #snake-overlay.visible .snake-modal{ transform:scale(1); }
@@ -858,24 +864,33 @@
       .snake-title{
         display:flex; align-items:center; gap:8px;
         font-size:15px; font-weight:600; letter-spacing:.3px;
-        color:#f4f4f5;
+        color:#111827;
       }
-      .snake-title i{ color:#4ade80; }
+      body.dark-mode .snake-title{ color:#f4f4f5; }
+      .snake-title i{ color:#22c55e; }
+      body.dark-mode .snake-title i{ color:#4ade80; }
 
       .snake-scores{
-        display:flex; gap:14px; font-size:12px; color:#9ca3af;
+        display:flex; gap:14px; font-size:12px; color:#6b7280;
         font-variant-numeric:tabular-nums;
       }
-      .snake-scores b{ color:#e5e7eb; font-weight:600; }
+      .snake-scores b{ color:#111827; font-weight:600; }
+      body.dark-mode .snake-scores{ color:#9ca3af; }
+      body.dark-mode .snake-scores b{ color:#e5e7eb; }
 
       .snake-close{
         width:28px; height:28px; border-radius:50%;
         display:flex; align-items:center; justify-content:center;
-        background:rgba(255,255,255,.06);
-        color:#d1d5db; cursor:pointer; border:none; font-size:13px;
-        transition:background .15s ease, transform .15s ease;
+        background:rgba(0,0,0,.05);
+        color:#4b5563; cursor:pointer; border:none; font-size:13px;
+        transition:background .15s ease, transform .15s ease, color .15s ease;
       }
-      .snake-close:hover{ background:rgba(255,255,255,.14); transform:rotate(90deg); }
+      .snake-close:hover{ background:rgba(0,0,0,.1); transform:rotate(90deg); }
+      body.dark-mode .snake-close{
+        background:rgba(255,255,255,.06);
+        color:#d1d5db;
+      }
+      body.dark-mode .snake-close:hover{ background:rgba(255,255,255,.14); }
 
       .snake-canvas-wrap{
         position:relative;
@@ -937,11 +952,16 @@
         color:#6b7280;
       }
       .snake-footer kbd{
-        background:rgba(255,255,255,.06);
-        border:1px solid rgba(255,255,255,.1);
+        background:rgba(0,0,0,.05);
+        border:1px solid rgba(0,0,0,.1);
         border-radius:5px;
         padding:2px 6px;
         font-size:10px;
+        color:#374151;
+      }
+      body.dark-mode .snake-footer kbd{
+        background:rgba(255,255,255,.06);
+        border-color:rgba(255,255,255,.1);
         color:#d1d5db;
       }
 
@@ -958,13 +978,18 @@
         .snake-footer{ display:none; }
       }
       .snake-touch button{
-        background:rgba(255,255,255,.06);
-        border:1px solid rgba(255,255,255,.1);
+        background:rgba(0,0,0,.05);
+        border:1px solid rgba(0,0,0,.1);
         border-radius:12px;
-        color:#e5e7eb;
+        color:#374151;
         font-size:16px;
         display:flex; align-items:center; justify-content:center;
         -webkit-tap-highlight-color:transparent;
+      }
+      body.dark-mode .snake-touch button{
+        background:rgba(255,255,255,.06);
+        border-color:rgba(255,255,255,.1);
+        color:#e5e7eb;
       }
       .snake-touch button:active{ background:rgba(74,222,128,.25); }
       .t-up{ grid-column:2; grid-row:1; }
