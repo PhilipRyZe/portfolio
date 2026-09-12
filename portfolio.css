@@ -389,24 +389,7 @@ body.dark-mode button:hover {
     transition: opacity 1s ease;
 }
 
-#snake-container {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #111;
-    padding: 20px;
-    border: 4px solid lime;
-    border-radius: 10px;
-    z-index: 9999;
-    display: none;
-}
-
-#snake-canvas {
-    background-color: black;
-    display: block;
-    margin: 0 auto;
-}
+/* Snake-Styling wurde direkt in die index.html verschoben (eigener <style>-Block dort) */
 
 /* Emoji-Fall-Animation */
 @keyframes emoji-fall {
