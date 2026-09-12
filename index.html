@@ -384,6 +384,7 @@
 
         let commentsLoaded = false;
         let commentsVisible = false;
+        let cachedComments = [];
 
         function formatTimestamp(ms) {
             const d = new Date(ms);
@@ -420,7 +421,8 @@
             return fetch(COMMENTS_API)
                 .then(res => res.json())
                 .then(data => {
-                    renderComments(data.comments || []);
+                    cachedComments = data.comments || [];
+                    renderComments(cachedComments);
                     commentsLoaded = true;
                 })
                 .catch(err => console.error('Kommentare konnten nicht geladen werden:', err));
@@ -453,10 +455,17 @@
                 body: JSON.stringify({ name, text })
             })
                 .then(res => res.json())
-                .then(() => {
+                .then(data => {
                     commentInput.value = '';
-                    commentsLoaded = false; // beim nächsten Öffnen neu laden
-                    if (commentsVisible) loadComments();
+
+                    // Neuen Kommentar sofort lokal anzeigen, statt auf den
+                    // Server zu warten (KV-Listen brauchen kurz, bis neue
+                    // Einträge global sichtbar sind)
+                    if (data.comment) {
+                        cachedComments.push(data.comment);
+                        commentsLoaded = true;
+                        if (commentsVisible) renderComments(cachedComments);
+                    }
                 })
                 .catch(err => console.error('Kommentar konnte nicht gespeichert werden:', err));
         });
