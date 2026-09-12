@@ -133,7 +133,7 @@
 
         <input type="text" id="calendar-input" style="display: none;">
 
-        <div id="copy-message" style="display: none; position: absolute; background-color: #333; color: #fff; padding: 5px; border-radius: 5px; font-size: 12px; z-index: 10;">Link kopiert!</div>
+        <div id="copy-message" class="popup-toast" style="display: none;">Link kopiert!</div>
 
     </header>
 
@@ -194,19 +194,20 @@
 
                     // Zeige die Nachricht an
                     copyMessage.style.display = 'block';
-                    copyMessage.style.opacity = '1';
 
                     // Positioniere die Nachricht unter dem Icon (optional anpassen)
                     const iconRect = linkIcon.getBoundingClientRect();
-                    copyMessage.style.top = iconRect.bottom + 'px';
+                    copyMessage.style.top = iconRect.bottom + 8 + 'px';
                     copyMessage.style.left = iconRect.left + 'px';
+
+                    requestAnimationFrame(() => copyMessage.classList.add('show'));
 
                     // Nachricht nach 2 Sekunden ausblenden
                     setTimeout(() => {
-                        copyMessage.style.opacity = '0'; // Blende es aus
+                        copyMessage.classList.remove('show'); // Blende es aus
                         setTimeout(() => {
                             copyMessage.style.display = 'none'; // Verstecke es nach der Animation
-                        }, 300); // Zeit für die Fade-out-Transition
+                        }, 250); // Zeit für die Fade-out-Transition
                     }, 2000); // Zeit, die die Nachricht angezeigt wird
                 })
                 .catch(err => {
@@ -227,17 +228,23 @@
             event.preventDefault(); // Verhindert das Standardverhalten des Links
 
             // Zeigt oder versteckt das Popup-Fenster
-            if (lightningPopup.style.display === 'none') {
+            if (!lightningPopup.classList.contains('show')) {
                 lightningPopup.style.display = 'block';
+                requestAnimationFrame(() => lightningPopup.classList.add('show'));
             } else {
-                lightningPopup.style.display = 'none';
+                hideLightningPopup();
             }
         });
+
+        function hideLightningPopup() {
+            lightningPopup.classList.remove('show');
+            setTimeout(() => { lightningPopup.style.display = 'none'; }, 180);
+        }
 
         // Schließt das Popup, wenn außerhalb geklickt wird
         window.addEventListener('click', function(event) {
             if (!lightningPopup.contains(event.target) && !lightningIcon.contains(event.target)) {
-                lightningPopup.style.display = 'none';
+                hideLightningPopup();
             }
         });
     </script>
@@ -1311,19 +1318,25 @@
                 // Klick-Event für das Lichtbirnen-Icon
                 lightbulbIcon.addEventListener('click', function(event) {
                     event.preventDefault();  // Verhindert das Standardverhalten des Links
-                    
+
                     // Zeige oder verstecke das Popup-Fenster
-                    if (lightbulbPopup.style.display === 'none') {
+                    if (!lightbulbPopup.classList.contains('show')) {
                         lightbulbPopup.style.display = 'block';
+                        requestAnimationFrame(() => lightbulbPopup.classList.add('show'));
                     } else {
-                        lightbulbPopup.style.display = 'none';
+                        hideLightbulbPopup();
                     }
                 });
-            
+
+                function hideLightbulbPopup() {
+                    lightbulbPopup.classList.remove('show');
+                    setTimeout(() => { lightbulbPopup.style.display = 'none'; }, 180);
+                }
+
                 // Schließt das Popup, wenn außerhalb geklickt wird
                 window.addEventListener('click', function(event) {
                     if (!lightbulbPopup.contains(event.target) && !lightbulbIcon.contains(event.target)) {
-                        lightbulbPopup.style.display = 'none';
+                        hideLightbulbPopup();
                     }
                 });
             </script>
