@@ -623,6 +623,8 @@ body.dark-mode .comment-time {
     font-size: 12.5px;
   }
   body.dark-mode #lightbulb-popup textarea:first-of-type {
+    background: transparent;
+    border: none;
     color: #9ca3af;
   }
 
