@@ -91,21 +91,21 @@ body.dark-mode .header-icon:hover {
     transform: translateX(-50%) translateY(0);
 }
 
-/* Solange das Icon sein Popup/Feld geöffnet hat: Hover-Effekt & Tooltip einfrieren */
-.header-icon.popup-open,
-.header-icon.popup-open:hover {
+/* Solange irgendein Popup/Feld offen ist: Hover-Effekt & Tooltip bei ALLEN Icons einfrieren */
+.header-icons.popup-open .header-icon,
+.header-icons.popup-open .header-icon:hover {
     background: transparent !important;
     color: #4b5563 !important;
     transform: none !important;
 }
 
-.header-icon.popup-open::after,
-.header-icon.popup-open:hover::after {
+.header-icons.popup-open .header-icon::after,
+.header-icons.popup-open .header-icon:hover::after {
     opacity: 0 !important;
 }
 
-body.dark-mode .header-icon.popup-open,
-body.dark-mode .header-icon.popup-open:hover {
+body.dark-mode .header-icons.popup-open .header-icon,
+body.dark-mode .header-icons.popup-open .header-icon:hover {
     color: #d1d5db !important;
 }
 
@@ -618,7 +618,7 @@ body.dark-mode .comment-time {
     font-family: inherit;
     background: transparent;
     border: none;
-    padding: 0;
+    padding: 2px 2px 10px;
     color: #6b7280;
     font-size: 12.5px;
   }

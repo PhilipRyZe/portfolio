@@ -141,6 +141,27 @@
 
 
     <script>
+        // Zentrale Verwaltung: solange irgendein Popup/Feld offen ist,
+        // bekommt die ganze Icon-Leiste die Klasse "popup-open" (friert
+        // Hover-Effekt + Tooltip bei ALLEN Icons ein, nicht nur beim
+        // gerade angeklickten).
+        const headerIconsBar = document.querySelector('.header-icons');
+        const openPopups = new Set();
+
+        function markPopupOpen(name) {
+            openPopups.add(name);
+            headerIconsBar.classList.add('popup-open');
+        }
+
+        function markPopupClosed(name) {
+            openPopups.delete(name);
+            if (openPopups.size === 0) {
+                headerIconsBar.classList.remove('popup-open');
+            }
+        }
+    </script>
+
+    <script>
         const calendarPopup = document.getElementById('calendar-popup');
         const currentDateDisplay = document.getElementById('current-date-display');
         const calendarIcon = document.getElementById('calendar-icon');
@@ -163,14 +184,14 @@
             clearTimeout(hideTimeout);
             calendarPopup.style.display = "block";
             calendarPopup.style.opacity = "1";
-            calendarIcon.classList.add('popup-open');
+            markPopupOpen('calendar');
 
             // Nach kurzer Anzeige langsam ausblenden
             hideTimeout = setTimeout(() => {
                 calendarPopup.style.opacity = "0";
                 setTimeout(() => {
                     calendarPopup.style.display = "none";
-                    calendarIcon.classList.remove('popup-open');
+                    markPopupClosed('calendar');
                 }, 800); // Wartet, bis die Fade-out-Transition fertig ist
             }, 2000);
         });
@@ -203,14 +224,14 @@
                     copyMessage.style.left = iconRect.left + 'px';
 
                     requestAnimationFrame(() => copyMessage.classList.add('show'));
-                    linkIcon.classList.add('popup-open');
+                    markPopupOpen('link');
 
                     // Nachricht nach 2 Sekunden ausblenden
                     setTimeout(() => {
                         copyMessage.classList.remove('show'); // Blende es aus
                         setTimeout(() => {
                             copyMessage.style.display = 'none'; // Verstecke es nach der Animation
-                            linkIcon.classList.remove('popup-open');
+                            markPopupClosed('link');
                         }, 250); // Zeit für die Fade-out-Transition
                     }, 2000); // Zeit, die die Nachricht angezeigt wird
                 })
@@ -235,7 +256,7 @@
             if (!lightningPopup.classList.contains('show')) {
                 lightningPopup.style.display = 'block';
                 requestAnimationFrame(() => lightningPopup.classList.add('show'));
-                lightningIcon.classList.add('popup-open');
+                markPopupOpen('lightning');
             } else {
                 hideLightningPopup();
             }
@@ -243,7 +264,7 @@
 
         function hideLightningPopup() {
             lightningPopup.classList.remove('show');
-            lightningIcon.classList.remove('popup-open');
+            markPopupClosed('lightning');
             setTimeout(() => { lightningPopup.style.display = 'none'; }, 180);
         }
 
@@ -1108,7 +1129,7 @@
         startMsg.classList.add('show');
         gameoverMsg.classList.remove('show');
         document.addEventListener('keydown', handleKey);
-        icon.classList.add('popup-open');
+        markPopupOpen('snake');
       }
 
       function closeGame(){
@@ -1116,7 +1137,7 @@
         setTimeout(()=>{ overlay.style.display = 'none'; }, 180);
         stopLoop();
         document.removeEventListener('keydown', handleKey);
-        icon.classList.remove('popup-open');
+        markPopupClosed('snake');
       }
 
       function startRun(){
@@ -1356,7 +1377,7 @@
                     if (!lightbulbPopup.classList.contains('show')) {
                         lightbulbPopup.style.display = 'block';
                         requestAnimationFrame(() => lightbulbPopup.classList.add('show'));
-                        lightbulbIcon.classList.add('popup-open');
+                        markPopupOpen('lightbulb');
                     } else {
                         hideLightbulbPopup();
                     }
@@ -1364,7 +1385,7 @@
 
                 function hideLightbulbPopup() {
                     lightbulbPopup.classList.remove('show');
-                    lightbulbIcon.classList.remove('popup-open');
+                    markPopupClosed('lightbulb');
                     setTimeout(() => { lightbulbPopup.style.display = 'none'; }, 180);
                 }
 
@@ -1401,7 +1422,7 @@
                   e.preventDefault();
                   popup.style.display = 'flex';
                   requestAnimationFrame(() => popup.classList.add('visible'));
-                  videoIcon.classList.add('popup-open');
+                  markPopupOpen('video');
                 }
 
                 function closeMemeVideo() {
@@ -1410,7 +1431,7 @@
                   video.currentTime = 0;
                   setTimeout(() => {
                       popup.style.display = 'none';
-                      videoIcon.classList.remove('popup-open');
+                      markPopupClosed('video');
                   }, 200);
                 }
 
