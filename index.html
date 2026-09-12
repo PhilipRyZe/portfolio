@@ -311,7 +311,8 @@
             Ich bin Philip, ausgelernter Fachinformatiker für Systemintegration beim OOWV.
         </p>
         <p>
-            Neben der Arbeit bastel ich gerne mithilfe von KI an eigenen kleinen Projekten, wie diesem Portfolio oder meinem eigenen URL-Shortener – weitere Projekte folgen.
+            Neben der Arbeit bastel ich gerne mithilfe von KI an eigenen kleinen Projekten, wie diesem
+            Portfolio oder meinem eigenen URL-Shortener – weitere Projekte folgen.
         </p>
     </section>
     <section id="work">
@@ -384,6 +385,14 @@
         let commentsLoaded = false;
         let commentsVisible = false;
 
+        function formatTimestamp(ms) {
+            const d = new Date(ms);
+            const pad = (n) => n.toString().padStart(2, '0');
+            const date = `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+            const time = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+            return `${date} ${time}`;
+        }
+
         function renderComments(comments) {
             commentList.innerHTML = '';
             comments.forEach(c => {
@@ -393,10 +402,15 @@
                 const nameEl = document.createElement('strong');
                 nameEl.textContent = c.name;
 
+                const timeEl = document.createElement('span');
+                timeEl.className = 'comment-time';
+                timeEl.textContent = formatTimestamp(c.time);
+
                 const textEl = document.createElement('p');
                 textEl.textContent = c.text;
 
                 commentDiv.appendChild(nameEl);
+                commentDiv.appendChild(timeEl);
                 commentDiv.appendChild(textEl);
                 commentList.appendChild(commentDiv);
             });
