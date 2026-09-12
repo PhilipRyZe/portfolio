@@ -561,30 +561,40 @@
         });
     </script>
 
-    <script>
-    document.getElementById('close-icon').addEventListener('click', function(event) {
-        event.preventDefault(); // Verhindert das Standardverhalten des Links
-
-        // Zeige eine kurze Verzögerung, bevor die Seite geschlossen wird
-        setTimeout(function() {
-            window.close(); // Schließt das aktuelle Fenster
-        }, 15500); // 3 Sekunden Verzögerung
-    });
-    </script>
-
     <audio id="close-sound" src="outro-song_oqu8zAg.mp3" preload="auto"></audio>
     <script>
     document.getElementById('close-icon').addEventListener('click', function(event) {
         event.preventDefault(); // Verhindert das Standardverhalten des Links
-    
+
         // Abspielen des Schließtons
         const sound = document.getElementById('close-sound');
-        sound.play();
-    
+        sound.play().catch(() => {});
+
         // Zeige eine kurze Verzögerung, bevor die Seite geschlossen wird
         setTimeout(function() {
-            window.close(); // Schließt das aktuelle Fenster
-        }, 15500); // 3 Sekunden Verzögerung
+            window.close(); // Schließt das aktuelle Fenster (nur bei per Skript geöffneten Tabs möglich)
+
+            // window.close() wird von den meisten Browsern aus Sicherheitsgründen
+            // ignoriert, wenn der Tab ganz normal aufgerufen wurde (Lesezeichen,
+            // Link, URL eingetippt) statt per JavaScript geöffnet zu sein. Das
+            // Verhalten unterscheidet sich dadurch stark je nach Gerät/Browser.
+            // Klappt es nicht, zeigen wir stattdessen eine freundliche Nachricht,
+            // statt dass einfach gar nichts passiert.
+            setTimeout(function() {
+                if (!document.hidden) {
+                    const fallback = document.createElement('div');
+                    fallback.textContent = 'Danke fürs Vorbeischauen! Du kannst diesen Tab jetzt schließen.';
+                    fallback.style.cssText = `
+                        position:fixed; inset:0; z-index:99999;
+                        display:flex; align-items:center; justify-content:center;
+                        background:rgba(0,0,0,0.9); color:#fff;
+                        font-size:1.15rem; text-align:center; padding:40px;
+                        line-height:1.5;
+                    `;
+                    document.body.appendChild(fallback);
+                }
+            }, 300);
+        }, 15500); // 15,5 Sekunden Verzögerung
     });
     </script>
 
