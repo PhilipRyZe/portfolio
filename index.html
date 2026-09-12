@@ -6,8 +6,6 @@
     <link rel="stylesheet" type="text/css" href="portfolio.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.0/dist/confetti.browser.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 <body>
     <div id="name-gate">
@@ -83,10 +81,7 @@
             <a href="#" id="snake-icon" class="header-icon" title="Snake spielen">
                 <i class="fa-solid fa-gamepad"></i>
             </a>
-            <a href="#" id="dragon-icon" class="header-icon" title="Scotland Forever">
-                <i class="fa-solid fa-dragon"></i>
-            </a>            
-            <a href="#" id="calendar-icon" class="header-icon" title="Calendar">
+            <a href="#" id="calendar-icon" class="header-icon" title="Heutiges Datum">
                 <i class="fa-solid fa-calendar-days"></i>
             </a>
             <a href="#" id="link-icon" class="header-icon" title="Copy link">
@@ -131,7 +126,7 @@
         </div>
 
         <div id="calendar-popup" style="display: none;">
-            <input type="text" id="flatpickr-calendar" placeholder="Wähle ein Datum">
+            <span id="current-date-display"></span>
         </div>
 
         <input type="text" id="calendar-input" style="display: none;">
@@ -144,30 +139,30 @@
 
 
     <script>
-        // Flatpickr Initialisierung
         const calendarPopup = document.getElementById('calendar-popup');
-        const calendarInput = document.getElementById('flatpickr-calendar');
+        const currentDateDisplay = document.getElementById('current-date-display');
         const calendarIcon = document.getElementById('calendar-icon');
-        
-        // Initialisiere Flatpickr
-        const flatpickrInstance = flatpickr(calendarInput, {
-            onChange: function(selectedDates, dateStr, instance) {
-                console.log("Datum ausgewählt:", dateStr); // Optional: Hier kannst du das ausgewählte Datum verarbeiten
-            },
-            dateFormat: "Y-m-d", // Beispiel: Jahres-Monat-Tag Format
-        });
-        
-        // Zeige den Kalender an, wenn auf das Icon geklickt wird
+
+        let hideTimeout;
+
         calendarIcon.addEventListener('click', function(event) {
-            event.preventDefault(); // Verhindert das Standardverhalten des Links
-            
-            // Zeigt das Kalender-Eingabefeld an, falls es versteckt ist
-            if (calendarPopup.style.display === "none") {
-                calendarPopup.style.display = "block";
-                flatpickrInstance.open(); // Öffnet den Kalender sofort
-            } else {
-                calendarPopup.style.display = "none"; // Kalender verstecken, wenn er bereits angezeigt wird
-            }
+            event.preventDefault();
+
+            const today = new Date();
+            const pad = (n) => n.toString().padStart(2, '0');
+            currentDateDisplay.textContent = `${pad(today.getDate())}/${pad(today.getMonth() + 1)}/${today.getFullYear()}`;
+
+            clearTimeout(hideTimeout);
+            calendarPopup.style.display = "block";
+            calendarPopup.style.opacity = "1";
+
+            // Nach kurzer Anzeige langsam ausblenden
+            hideTimeout = setTimeout(() => {
+                calendarPopup.style.opacity = "0";
+                setTimeout(() => {
+                    calendarPopup.style.display = "none";
+                }, 800); // Wartet, bis die Fade-out-Transition fertig ist
+            }, 2000);
         });
     </script>
 
@@ -689,21 +684,6 @@
                 isElevatorBusy = false; // 🔓 Fahrstuhl wieder frei
             }, 1000);
         };
-    });
-    </script>
-
-    <audio id="scotland-audio" src="scotlandforever.mp3" preload="auto"></audio>
-    
-    <script>    
-    const dragonIcon = document.getElementById("dragon-icon");
-    const scotlandAudio = document.getElementById("scotland-audio");
-
-    dragonIcon.addEventListener("click", function(e) {
-        e.preventDefault();
-
-        scotlandAudio.pause();
-        scotlandAudio.currentTime = 0;
-        scotlandAudio.play();
     });
     </script>
 

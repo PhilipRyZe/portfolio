@@ -33,16 +33,13 @@ header {
     top: 50px;
     right: 20px;
     background-color: #fff;
-    padding: 10px;
+    padding: 10px 16px;
     border: 1px solid #ccc;
     border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-#flatpickr-calendar {
-    font-size: 16px;
-    padding: 5px;
-    width: 100%;
+    font-weight: bold;
+    opacity: 1;
+    transition: opacity 0.8s ease;
 }
 
 /* Stil für das Blitz-Popup-Fenster */
