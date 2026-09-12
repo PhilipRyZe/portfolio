@@ -126,7 +126,7 @@
             🚪
         </div>
 
-        <div id="calendar-popup" style="display: none;">
+        <div id="calendar-popup" class="popup" style="display: none;">
             <span class="date-label">Heute ist der</span>
             <span id="current-date-display"></span>
         </div>
@@ -163,12 +163,14 @@
             clearTimeout(hideTimeout);
             calendarPopup.style.display = "block";
             calendarPopup.style.opacity = "1";
+            calendarIcon.classList.add('popup-open');
 
             // Nach kurzer Anzeige langsam ausblenden
             hideTimeout = setTimeout(() => {
                 calendarPopup.style.opacity = "0";
                 setTimeout(() => {
                     calendarPopup.style.display = "none";
+                    calendarIcon.classList.remove('popup-open');
                 }, 800); // Wartet, bis die Fade-out-Transition fertig ist
             }, 2000);
         });
@@ -201,12 +203,14 @@
                     copyMessage.style.left = iconRect.left + 'px';
 
                     requestAnimationFrame(() => copyMessage.classList.add('show'));
+                    linkIcon.classList.add('popup-open');
 
                     // Nachricht nach 2 Sekunden ausblenden
                     setTimeout(() => {
                         copyMessage.classList.remove('show'); // Blende es aus
                         setTimeout(() => {
                             copyMessage.style.display = 'none'; // Verstecke es nach der Animation
+                            linkIcon.classList.remove('popup-open');
                         }, 250); // Zeit für die Fade-out-Transition
                     }, 2000); // Zeit, die die Nachricht angezeigt wird
                 })
@@ -231,6 +235,7 @@
             if (!lightningPopup.classList.contains('show')) {
                 lightningPopup.style.display = 'block';
                 requestAnimationFrame(() => lightningPopup.classList.add('show'));
+                lightningIcon.classList.add('popup-open');
             } else {
                 hideLightningPopup();
             }
@@ -238,6 +243,7 @@
 
         function hideLightningPopup() {
             lightningPopup.classList.remove('show');
+            lightningIcon.classList.remove('popup-open');
             setTimeout(() => { lightningPopup.style.display = 'none'; }, 180);
         }
 
@@ -848,7 +854,7 @@
         color:#1f2937;
       }
       body.dark-mode .snake-modal{
-        background:linear-gradient(160deg,#15181d,#0c0e12);
+        background:linear-gradient(160deg,#333333,#1e1e1e);
         border-color:rgba(255,255,255,.08);
         box-shadow:0 20px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.03) inset;
         color:#e5e7eb;
@@ -896,7 +902,7 @@
         position:relative;
         border-radius:14px;
         overflow:hidden;
-        background:#0a0c10;
+        background:#2a3142;
         box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
       }
       #snake-canvas{ display:block; width:100%; height:auto; margin:0; background:transparent; }
@@ -1102,6 +1108,7 @@
         startMsg.classList.add('show');
         gameoverMsg.classList.remove('show');
         document.addEventListener('keydown', handleKey);
+        icon.classList.add('popup-open');
       }
 
       function closeGame(){
@@ -1109,6 +1116,7 @@
         setTimeout(()=>{ overlay.style.display = 'none'; }, 180);
         stopLoop();
         document.removeEventListener('keydown', handleKey);
+        icon.classList.remove('popup-open');
       }
 
       function startRun(){
@@ -1235,8 +1243,8 @@
         const w = GRID*CELL, h = GRID*CELL;
 
         const bg = ctx.createLinearGradient(0,0,0,h);
-        bg.addColorStop(0,'#0d1016');
-        bg.addColorStop(1,'#0a0c10');
+        bg.addColorStop(0,'#3a4358');
+        bg.addColorStop(1,'#2a3142');
         ctx.fillStyle = bg;
         ctx.fillRect(0,0,w,h);
 
@@ -1348,6 +1356,7 @@
                     if (!lightbulbPopup.classList.contains('show')) {
                         lightbulbPopup.style.display = 'block';
                         requestAnimationFrame(() => lightbulbPopup.classList.add('show'));
+                        lightbulbIcon.classList.add('popup-open');
                     } else {
                         hideLightbulbPopup();
                     }
@@ -1355,6 +1364,7 @@
 
                 function hideLightbulbPopup() {
                     lightbulbPopup.classList.remove('show');
+                    lightbulbIcon.classList.remove('popup-open');
                     setTimeout(() => { lightbulbPopup.style.display = 'none'; }, 180);
                 }
 
@@ -1391,13 +1401,17 @@
                   e.preventDefault();
                   popup.style.display = 'flex';
                   requestAnimationFrame(() => popup.classList.add('visible'));
+                  videoIcon.classList.add('popup-open');
                 }
 
                 function closeMemeVideo() {
                   popup.classList.remove('visible');
                   video.pause();
                   video.currentTime = 0;
-                  setTimeout(() => { popup.style.display = 'none'; }, 200);
+                  setTimeout(() => {
+                      popup.style.display = 'none';
+                      videoIcon.classList.remove('popup-open');
+                  }, 200);
                 }
 
                 videoIcon.addEventListener('click', openMemeVideo);
