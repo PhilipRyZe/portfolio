@@ -673,44 +673,67 @@
         elevatorIcon.style.width = `${rect.width}px`;
         elevatorIcon.style.height = `${rect.height}px`;
         elevatorIcon.style.zIndex = "9999";
-        // Feste Fahrtdauer statt von der Musikdatei abhängig zu sein.
-        // Vorher hing die Rückfahrt komplett an audio.onended – lud/spielte
-        // die Datei mal nicht sauber (Autoplay-Sperre, kurzer Ladefehler),
-        // kam der Fahrstuhl nie zurück und blockierte alle weiteren Klicks.
-        const rideDuration = 3; // Sekunden
-        elevatorIcon.style.transition = `top ${rideDuration}s linear`;
+        // Feste Fahrtdauer als Sicherheitsnetz, falls die Dauer der Datei
+        // aus irgendeinem Grund nicht ermittelt werden kann.
+        const FALLBACK_DURATION = 4.5; // Sekunden
+
+        function beginRide(duration) {
+            elevatorIcon.style.transition = `top ${duration}s linear`;
+
+            // Fahrt starten
+            setTimeout(() => {
+                elevatorIcon.style.top = "90vh";
+            }, 50);
+
+            // Rückfahrt und Rückbau – per Timer, passend zur echten Musikdauer
+            const resetElevator = () => {
+                elevatorIcon.style.transition = "top 1s ease";
+                elevatorIcon.style.top = `${startTop}px`;
+
+                setTimeout(() => {
+                    // Ursprüngliches Styling wiederherstellen
+                    elevatorIcon.style.position = "";
+                    elevatorIcon.style.left = "";
+                    elevatorIcon.style.top = "";
+                    elevatorIcon.style.width = "";
+                    elevatorIcon.style.height = "";
+                    elevatorIcon.style.zIndex = "";
+                    elevatorIcon.style.transition = "";
+
+                    placeholder.replaceWith(elevatorIcon);
+                    isElevatorBusy = false; // 🔓 Fahrstuhl wieder frei
+                }, 1000);
+            };
+
+            setTimeout(resetElevator, duration * 1000);
+        }
 
         elevatorAudio.currentTime = 0;
         elevatorAudio.play().catch(() => {
             // Autoplay verhindert o.ä. – Fahrt trotzdem stattfinden lassen
         });
 
-        // Fahrt starten
-        setTimeout(() => {
-            elevatorIcon.style.top = "90vh";
-        }, 50);
-
-        // Rückfahrt und Rückbau – per festem Timer statt audio.onended
-        const resetElevator = () => {
-            elevatorIcon.style.transition = "top 1s ease";
-            elevatorIcon.style.top = `${startTop}px`;
-
+        if (isFinite(elevatorAudio.duration) && elevatorAudio.duration > 0) {
+            // Dauer ist schon bekannt (Normalfall bei preload="auto")
+            beginRide(elevatorAudio.duration);
+        } else {
+            // Dauer noch nicht bekannt -> kurz auf Metadaten warten,
+            // sonst nach 700ms auf den Fallback-Wert zurückfallen
+            let started = false;
+            const onMeta = () => {
+                if (started) return;
+                started = true;
+                elevatorAudio.removeEventListener("loadedmetadata", onMeta);
+                beginRide(isFinite(elevatorAudio.duration) && elevatorAudio.duration > 0 ? elevatorAudio.duration : FALLBACK_DURATION);
+            };
+            elevatorAudio.addEventListener("loadedmetadata", onMeta);
             setTimeout(() => {
-                // Ursprüngliches Styling wiederherstellen
-                elevatorIcon.style.position = "";
-                elevatorIcon.style.left = "";
-                elevatorIcon.style.top = "";
-                elevatorIcon.style.width = "";
-                elevatorIcon.style.height = "";
-                elevatorIcon.style.zIndex = "";
-                elevatorIcon.style.transition = "";
-
-                placeholder.replaceWith(elevatorIcon);
-                isElevatorBusy = false; // 🔓 Fahrstuhl wieder frei
-            }, 1000);
-        };
-
-        setTimeout(resetElevator, rideDuration * 1000);
+                if (started) return;
+                started = true;
+                elevatorAudio.removeEventListener("loadedmetadata", onMeta);
+                beginRide(FALLBACK_DURATION);
+            }, 700);
+        }
     });
     </script>
 
