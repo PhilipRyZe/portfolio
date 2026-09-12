@@ -308,11 +308,13 @@
     <section id="bio">
         <h2>Über mich</h2>
         <p>
-            Ich bin Philip, ausgelernter Fachinformatiker für Systemintegration beim OOWV.
+            Ich bin Philip, Auszubildender zum Fachinformatiker für Systemintegration beim OOWV.
+            Dort arbeite ich unter anderem an einem größeren Infrastruktur-Projekt: dem Austausch unserer
+            Thin Clients und der Migration auf eine IGEL Universal Management Suite (UMS)-Umgebung.
         </p>
         <p>
-            Neben der Arbeit bastel ich gerne mithilfe von KI an eigenen kleinen Projekten, wie diesem Portfolio oder
-            meinem eigenen URL-Shortener – weitere Projekte folgen.
+            Neben der Arbeit bastel ich gerne an eigenen kleinen Projekten – wie diesem Portfolio oder
+            meinem eigenen URL-Shortener – und leite außerdem eine Gaming-Community auf Discord.
         </p>
     </section>
     <section id="work">
@@ -362,13 +364,13 @@
 
         <!-- Eingabefeld für Kommentare -->
         <textarea id="comment-input" placeholder="Schreib deinen Kommentar..."></textarea>
-        <button id="submit-comment">Kommentar abschicken</button>
+        <div class="comment-actions">
+            <button id="submit-comment">Kommentar abschicken</button>
+            <button id="toggle-comments">Kommentare anzeigen</button>
+        </div>
 
-        <!-- Knopf zum Löschen der Kommentare -->
-        <button id="clear-comments">Alle Kommentare löschen</button>
-
-        <div id="comment-list">
-            <!-- Kommentare werden hier angezeigt -->
+        <div id="comment-list" style="display: none;">
+            <!-- Kommentare werden hier per JS eingefügt -->
         </div>
     </section>
 
@@ -378,47 +380,74 @@
     <script>
         const commentInput = document.getElementById('comment-input');
         const submitCommentButton = document.getElementById('submit-comment');
-        const clearCommentsButton = document.getElementById('clear-comments');
+        const toggleCommentsButton = document.getElementById('toggle-comments');
         const commentList = document.getElementById('comment-list');
+        const COMMENTS_API = "https://comments.pjanssen.cc/api/comments";
 
-        // Lade bestehende Kommentare (falls vorhanden)
-        window.onload = function() {
-            const savedComments = JSON.parse(localStorage.getItem('comments')) || [];
-            savedComments.forEach(comment => {
-                displayComment(comment);
+        let commentsLoaded = false;
+        let commentsVisible = false;
+
+        function renderComments(comments) {
+            commentList.innerHTML = '';
+            comments.forEach(c => {
+                const commentDiv = document.createElement('div');
+                commentDiv.className = 'comment';
+
+                const nameEl = document.createElement('strong');
+                nameEl.textContent = c.name;
+
+                const textEl = document.createElement('p');
+                textEl.textContent = c.text;
+
+                commentDiv.appendChild(nameEl);
+                commentDiv.appendChild(textEl);
+                commentList.appendChild(commentDiv);
             });
-        };
+        }
 
-        // Kommentar hinzufügen und im LocalStorage speichern
-        submitCommentButton.addEventListener('click', function() {
-            const newComment = commentInput.value.trim();
+        function loadComments() {
+            return fetch(COMMENTS_API)
+                .then(res => res.json())
+                .then(data => {
+                    renderComments(data.comments || []);
+                    commentsLoaded = true;
+                })
+                .catch(err => console.error('Kommentare konnten nicht geladen werden:', err));
+        }
 
-            if (newComment) {
-                // Kommentar anzeigen
-                displayComment(newComment);
+        // Kommentare ein-/ausblenden
+        toggleCommentsButton.addEventListener('click', function() {
+            commentsVisible = !commentsVisible;
 
-                // Kommentar in LocalStorage speichern
-                const savedComments = JSON.parse(localStorage.getItem('comments')) || [];
-                savedComments.push(newComment);
-                localStorage.setItem('comments', JSON.stringify(savedComments));
-
-                // Eingabefeld leeren
-                commentInput.value = '';
+            if (commentsVisible) {
+                commentList.style.display = 'block';
+                toggleCommentsButton.textContent = 'Kommentare ausblenden';
+                if (!commentsLoaded) loadComments();
+            } else {
+                commentList.style.display = 'none';
+                toggleCommentsButton.textContent = 'Kommentare anzeigen';
             }
         });
 
-        // Kommentar in den Kommentarbereich einfügen
-        function displayComment(comment) {
-            const commentDiv = document.createElement('div');
-            commentDiv.className = 'comment';
-            commentDiv.textContent = comment;
-            commentList.appendChild(commentDiv);
-        }
+        // Kommentar abschicken und serverseitig speichern
+        submitCommentButton.addEventListener('click', function() {
+            const text = commentInput.value.trim();
+            if (!text) return;
 
-        // Alle Kommentare löschen
-        clearCommentsButton.addEventListener('click', function() {
-            localStorage.removeItem('comments');  // Löscht alle Kommentare im LocalStorage
-            commentList.innerHTML = '';  // Löscht alle Kommentare auf der Seite
+            const name = localStorage.getItem('visitorName') || 'Anonym';
+
+            fetch(COMMENTS_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, text })
+            })
+                .then(res => res.json())
+                .then(() => {
+                    commentInput.value = '';
+                    commentsLoaded = false; // beim nächsten Öffnen neu laden
+                    if (commentsVisible) loadComments();
+                })
+                .catch(err => console.error('Kommentar konnte nicht gespeichert werden:', err));
         });
     </script>
 
