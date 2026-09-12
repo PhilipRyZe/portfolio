@@ -237,13 +237,13 @@ button:hover {
 }
 
 .comment strong {
-    display: block;
-    margin-bottom: 4px;
+    display: inline-block;
+    margin-right: 12px;
     color: #28a745;
 }
 
 .comment-time {
-    display: block;
+    display: inline-block;
     font-size: 0.8rem;
     color: #777;
     margin-bottom: 6px;
