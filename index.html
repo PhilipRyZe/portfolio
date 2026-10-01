@@ -9,46 +9,6 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
-    <div id="name-gate">
-        <div class="name-gate-box">
-            <p>Wie heißt du?</p>
-            <input type="text" id="visitor-name-input" placeholder="Dein Name" maxlength="30" autofocus>
-            <button id="visitor-name-submit">Weiter</button>
-        </div>
-    </div>
-
-    <script>
-        (function() {
-            const gate = document.getElementById('name-gate');
-            const input = document.getElementById('visitor-name-input');
-            const submitBtn = document.getElementById('visitor-name-submit');
-
-            const savedName = localStorage.getItem('visitorName');
-
-            if (savedName) {
-                gate.style.display = 'none';
-            } else {
-                document.body.classList.add('gated');
-            }
-
-            function submitName() {
-                const name = input.value.trim();
-                if (!name) {
-                    input.focus();
-                    return;
-                }
-                localStorage.setItem('visitorName', name);
-                gate.style.display = 'none';
-                document.body.classList.remove('gated');
-            }
-
-            submitBtn.addEventListener('click', submitName);
-            input.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') submitName();
-            });
-        })();
-    </script>
-
     <header>
         <div id="profile-container" style="position: relative; display: inline-block;">
             <!-- Profilbild -->
@@ -422,7 +382,8 @@
     <section id="comments-section">
         <h2>Kommentare</h2>
 
-        <!-- Eingabefeld für Kommentare -->
+        <!-- Eingabefelder für Kommentare -->
+        <input type="text" id="comment-name" placeholder="Dein Name (optional)" maxlength="30" autocomplete="nickname">
         <textarea id="comment-input" placeholder="Schreib deinen Kommentar..."></textarea>
         <div class="comment-actions">
             <button id="submit-comment">Kommentar abschicken</button>
@@ -439,6 +400,7 @@
 
     <script>
         const commentInput = document.getElementById('comment-input');
+        const commentNameInput = document.getElementById('comment-name');
         const submitCommentButton = document.getElementById('submit-comment');
         const toggleCommentsButton = document.getElementById('toggle-comments');
         const commentList = document.getElementById('comment-list');
@@ -447,6 +409,9 @@
         let commentsLoaded = false;
         let commentsVisible = false;
         let cachedComments = [];
+
+        // Zuletzt verwendeten Namen wieder einsetzen (spart das Tippen)
+        commentNameInput.value = localStorage.getItem('visitorName') || '';
 
         function formatTimestamp(ms) {
             const d = new Date(ms);
@@ -509,7 +474,13 @@
             const text = commentInput.value.trim();
             if (!text) return;
 
-            const name = localStorage.getItem('visitorName') || 'Anonym';
+            const typedName = commentNameInput.value.trim().slice(0, 30);
+            const name = typedName || 'Anonym';
+            if (typedName) {
+                localStorage.setItem('visitorName', typedName);
+            } else {
+                localStorage.removeItem('visitorName');
+            }
 
             fetch(COMMENTS_API, {
                 method: 'POST',

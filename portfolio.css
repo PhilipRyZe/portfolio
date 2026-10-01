@@ -405,6 +405,17 @@ footer {
     padding-left: 20px;
 }
 
+#comment-name {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: inherit;
+}
+
 textarea {
     width: 100%;
     height: 100px;
@@ -503,6 +514,7 @@ body.dark-mode .social-icon:hover {
 
 /* Kommentar-Feld & Buttons */
 body.dark-mode textarea,
+body.dark-mode #comment-name,
 body.dark-mode button {
     background-color: #444;
     color: #f5f5f5;
@@ -719,62 +731,6 @@ body.dark-mode .comment-time {
 
 
 
-
-/* Namensabfrage beim ersten Besuch */
-#name-gate {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(6px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-}
-
-.name-gate-box {
-    background: #fff;
-    padding: 30px 40px;
-    border-radius: 12px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-.name-gate-box p {
-    margin: 0 0 15px 0;
-    font-size: 1.1rem;
-}
-
-.name-gate-box input {
-    display: block;
-    margin: 0 auto 15px auto;
-    padding: 10px;
-    width: 220px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 15px;
-}
-
-.name-gate-box button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    background: #ff4d4d;
-    color: #fff;
-    cursor: pointer;
-    font-size: 15px;
-}
-
-.name-gate-box button:hover {
-    background: #ff1a1a;
-}
-
-/* Restliche Seite blurren, solange die Namensabfrage offen ist */
-body.gated > *:not(#name-gate) {
-    filter: blur(6px);
-    pointer-events: none;
-    user-select: none;
-}
 
 /* Like-Button im "bereits geliked"-Zustand */
 #like-button:disabled {
