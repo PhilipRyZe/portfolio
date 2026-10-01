@@ -405,16 +405,125 @@ footer {
     padding-left: 20px;
 }
 
-#comment-name {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-family: inherit;
-    font-size: inherit;
+/* ---------- Kommentar-Formular ---------- */
+
+#comments-section h2 { margin-top: 0; }
+
+.comment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
+
+#comments-section #comment-name,
+#comments-section #comment-input {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 12px 14px;
+    background: #fff;
+    color: #222;
+    border: 1px solid #d3d3d3;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+#comments-section #comment-name { max-width: 280px; }
+
+#comments-section #comment-input {
+    height: auto;
+    min-height: 110px;
+    resize: vertical;
+}
+
+#comments-section #comment-name::placeholder,
+#comments-section #comment-input::placeholder { color: #8a8a8a; }
+
+#comments-section #comment-name:focus,
+#comments-section #comment-input:focus {
+    outline: none;
+    border-color: #28a745;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.18);
+}
+
+#comments-section .comment-actions {
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+
+#comments-section .comment-actions button {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+
+/* zweiter Button (anzeigen/ausblenden) dezenter als der Haupt-Button */
+#comments-section #toggle-comments {
+    background: transparent;
+    color: #28a745;
+    border: 1px solid #28a745;
+}
+#comments-section #toggle-comments:hover {
+    background: rgba(40, 167, 69, 0.1);
+}
+
+/* einzelne Kommentare */
+#comments-section .comment {
+    background: #fff;
+    border: 1px solid #e1e1e1;
+    border-left: 3px solid #28a745;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+}
+#comments-section .comment strong { margin-right: 10px; }
+#comments-section .comment p {
+    margin: 6px 0 0;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* Dark Mode */
+body.dark-mode #comments-section #comment-name,
+body.dark-mode #comments-section #comment-input {
+    background: #3a3a3a;
+    color: #f5f5f5;
+    border-color: #5a5a5a;
+}
+body.dark-mode #comments-section #comment-name::placeholder,
+body.dark-mode #comments-section #comment-input::placeholder { color: #a5a5a5; }
+body.dark-mode #comments-section #comment-name:focus,
+body.dark-mode #comments-section #comment-input:focus {
+    border-color: #3fbf62;
+    box-shadow: 0 0 0 3px rgba(63, 191, 98, 0.25);
+}
+body.dark-mode #comments-section #submit-comment {
+    background: #28a745;
+    border: none;
+    color: #fff;
+}
+body.dark-mode #comments-section #submit-comment:hover { background: #218838; }
+body.dark-mode #comments-section #toggle-comments {
+    background: transparent;
+    color: #5fd17f;
+    border: 1px solid #5fd17f;
+}
+body.dark-mode #comments-section #toggle-comments:hover {
+    background: rgba(95, 209, 127, 0.12);
+}
+body.dark-mode #comments-section .comment {
+    background: #3a3a3a;
+    border: 1px solid #555;
+    border-left: 3px solid #3fbf62;
+}
+body.dark-mode #comments-section .comment strong { color: #5fd17f; }
 
 textarea {
     width: 100%;
@@ -514,7 +623,6 @@ body.dark-mode .social-icon:hover {
 
 /* Kommentar-Feld & Buttons */
 body.dark-mode textarea,
-body.dark-mode #comment-name,
 body.dark-mode button {
     background-color: #444;
     color: #f5f5f5;

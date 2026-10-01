@@ -383,8 +383,10 @@
         <h2>Kommentare</h2>
 
         <!-- Eingabefelder für Kommentare -->
-        <input type="text" id="comment-name" placeholder="Dein Name (optional)" maxlength="30" autocomplete="nickname">
-        <textarea id="comment-input" placeholder="Schreib deinen Kommentar..."></textarea>
+        <div class="comment-form">
+            <input type="text" id="comment-name" placeholder="Dein Name (optional)" aria-label="Dein Name" maxlength="30" autocomplete="nickname">
+            <textarea id="comment-input" placeholder="Schreib deinen Kommentar..." aria-label="Dein Kommentar"></textarea>
+        </div>
         <div class="comment-actions">
             <button id="submit-comment">Kommentar abschicken</button>
             <button id="toggle-comments">Kommentare anzeigen</button>
@@ -412,6 +414,14 @@
 
         // Zuletzt verwendeten Namen wieder einsetzen (spart das Tippen)
         commentNameInput.value = localStorage.getItem('visitorName') || '';
+
+        // Enter im Namensfeld springt direkt ins Kommentarfeld
+        commentNameInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                commentInput.focus();
+            }
+        });
 
         function formatTimestamp(ms) {
             const d = new Date(ms);
