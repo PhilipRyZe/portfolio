@@ -1,5 +1,8 @@
-<html>
+<!DOCTYPE html>
+<html lang="de">
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>
         Philip Janßen - Portfolio
     </title>
@@ -17,6 +20,65 @@
         </div>
         <h1>Philip Janßen</h1>
         <p>Fachinformatiker für Systemintegration</p>
+
+        <!-- Timer: Zeit seit einem Datum. Das Startdatum steht in data-start (Format JJJJ-MM-TTTHH:MM:SS) -->
+        <div id="since-timer" role="timer" data-start="2026-06-15T00:00:00">
+            <div class="since-label">seit <span id="since-date"></span></div>
+            <div class="since-grid">
+                <div class="since-cell"><span class="since-num" id="since-years">0</span><span class="since-unit" id="since-years-unit">Jahre</span></div>
+                <div class="since-cell"><span class="since-num" id="since-months">0</span><span class="since-unit" id="since-months-unit">Monate</span></div>
+                <div class="since-cell"><span class="since-num" id="since-days">0</span><span class="since-unit" id="since-days-unit">Tage</span></div>
+                <div class="since-cell"><span class="since-num" id="since-hours">00</span><span class="since-unit">Stunden</span></div>
+                <div class="since-cell"><span class="since-num" id="since-minutes">00</span><span class="since-unit">Minuten</span></div>
+                <div class="since-cell"><span class="since-num" id="since-seconds">00</span><span class="since-unit">Sekunden</span></div>
+            </div>
+        </div>
+        <script>
+        (function () {
+            var box = document.getElementById('since-timer');
+            var start = new Date(box.dataset.start);        // lokale Zeit des Besuchers
+            if (isNaN(start)) return;                        // ungültiges Datum: nichts tun
+
+            document.getElementById('since-date').textContent =
+                start.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+            function pad(n) { return n < 10 ? '0' + n : String(n); }
+            function set(id, value) { document.getElementById(id).textContent = value; }
+
+            // Kalendergenau: "geliehene" Einheiten wie bei einer schriftlichen Subtraktion
+            function diff(from, to) {
+                var y  = to.getFullYear() - from.getFullYear();
+                var mo = to.getMonth()    - from.getMonth();
+                var d  = to.getDate()     - from.getDate();
+                var h  = to.getHours()    - from.getHours();
+                var mi = to.getMinutes()  - from.getMinutes();
+                var s  = to.getSeconds()  - from.getSeconds();
+                if (s < 0)  { s  += 60; mi--; }
+                if (mi < 0) { mi += 60; h--; }
+                if (h < 0)  { h  += 24; d--; }
+                if (d < 0)  { d  += new Date(to.getFullYear(), to.getMonth(), 0).getDate(); mo--; }
+                if (mo < 0) { mo += 12; y--; }
+                return { y: y, mo: mo, d: d, h: h, mi: mi, s: s };
+            }
+
+            function tick() {
+                var now = new Date();
+                var t = now < start ? { y: 0, mo: 0, d: 0, h: 0, mi: 0, s: 0 } : diff(start, now);
+                set('since-years', t.y);
+                set('since-months', t.mo);
+                set('since-days', t.d);
+                set('since-hours', pad(t.h));
+                set('since-minutes', pad(t.mi));
+                set('since-seconds', pad(t.s));
+                set('since-years-unit',  t.y  === 1 ? 'Jahr'  : 'Jahre');
+                set('since-months-unit', t.mo === 1 ? 'Monat' : 'Monate');
+                set('since-days-unit',   t.d  === 1 ? 'Tag'   : 'Tage');
+            }
+
+            tick();
+            setInterval(tick, 1000);
+        })();
+        </script>
 
         <div id="like-system">
             <button id="like-button">
